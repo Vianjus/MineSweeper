@@ -20,20 +20,17 @@ public class Minesweeper extends JFrame {
     private JButton giveUp;
     private JButton finish;
     private JButton panic;
-    private ImageIcon emoji;
 
-    private void redimensionaEmoji(){
-        Image imagemOriginal = emoji.getImage();
-        Image imagemRedimensionada = imagemOriginal.getScaledInstance(25, 20, Image.SCALE_SMOOTH);
-        ImageIcon iconeRedimensionado = new ImageIcon(imagemRedimensionada);
-        reset.setIcon(iconeRedimensionado);
+    private void redefineAndInsertImage(String caminhoDaImagem, int largura, int altura) {
+        ImageIcon imagemOriginal = new ImageIcon(caminhoDaImagem);
+        Image imagemRedimensionada = imagemOriginal.getImage().getScaledInstance(largura, altura, Image.SCALE_SMOOTH);
+        reset.setIcon(new ImageIcon(imagemRedimensionada));
     }
 
     private final ActionListener actionListener = actionEvent -> {
         Object source = actionEvent.getSource();
         if (source == reset) {
-            emoji = new ImageIcon("img/happy.png");
-            redimensionaEmoji();
+            redefineAndInsertImage("img/happy.png",25,20);
             createMines();
         } 
         else if (source == giveUp) {
@@ -47,8 +44,7 @@ public class Minesweeper extends JFrame {
         }
 
         else {
-            emoji = new ImageIcon("img/happy.png");
-            redimensionaEmoji();
+            redefineAndInsertImage("img/happy.png",25,20);
             handleCell((Cell) source);
         }
     };
@@ -195,8 +191,7 @@ public class Minesweeper extends JFrame {
         giveUp = new JButton("Desistir");
         finish = new JButton("Encerrar");
         panic = new JButton("Panic");
-        emoji = new ImageIcon("img/happy.png");
-        redimensionaEmoji();
+        redefineAndInsertImage("img/happy.png",25,20);
 
         reset.addActionListener(actionListener);
         giveUp.addActionListener(actionListener);
@@ -252,6 +247,7 @@ public class Minesweeper extends JFrame {
     }
 
     private void createMines() {
+        redefineAndInsertImage("img/happy.png",25,20);
         resetAllCells();
 
         final int mineCount = 10;
@@ -286,8 +282,6 @@ public class Minesweeper extends JFrame {
             cell.setForeground(Color.RED);
             cell.reveal();
             revealBoardAndDisplay("Você clicou em uma mina!");
-            emoji = new ImageIcon("img/sad.png");
-            redimensionaEmoji();
             return;
         }
         if (cell.getValue() == 0) {
@@ -306,8 +300,7 @@ public class Minesweeper extends JFrame {
                 cells[row][col].reveal();
             }
         }
-        emoji = new ImageIcon("img/sad.png");
-        redimensionaEmoji();
+        redefineAndInsertImage("img/sad.png",25,20);
         JOptionPane.showMessageDialog(
                 frame, message, "Fim de Jogo",
                 JOptionPane.ERROR_MESSAGE
