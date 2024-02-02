@@ -12,6 +12,8 @@ public class Minesweeper extends JFrame {
     private static final int MINE = 10;
     private static final int SIZE = 500;
     private static Cell[] reusableStorage = new Cell[8];
+    private int totalMines = 10;
+    private int flaggedCells = 0;
 
     private int gridSize;
     private Cell[][] cells;
@@ -20,6 +22,8 @@ public class Minesweeper extends JFrame {
     private JButton giveUp;
     private JButton finish;
     private JButton panic;
+
+    private JLabel minesCounterLabel;
 
     private void redefineAndInsertImage(String caminhoDaImagem, int largura, int altura) {
         ImageIcon imagemOriginal = new ImageIcon(caminhoDaImagem);
@@ -49,12 +53,19 @@ public class Minesweeper extends JFrame {
         }
     };
 
+    // Adicione o método updateMinesCounterLabel() na classe Minesweeper
+    private void updateMinesCounterLabel() {
+        int remainingMines = totalMines - flaggedCells;
+        // Atualize o rótulo do contador de minas
+        minesCounterLabel.setText("Minas: " + remainingMines);
+    }
+
     private class Cell extends JButton {
         // icons
-        ImageIcon flag = new ImageIcon("C:\\Users\\leand\\Área de Trabalho\\new\\img\\flag.png");
+        /*ImageIcon flag = new ImageIcon("C:\\Users\\leand\\Área de Trabalho\\new\\img\\flag.png");
         ImageIcon bomb = new ImageIcon("C:\\Users\\leand\\Área de Trabalho\\new\\img\\bomb.png");
         ImageIcon sadFace = new ImageIcon("img/sad.png");
-        ImageIcon happyFace = new ImageIcon("img/happy.png");
+        ImageIcon happyFace = new ImageIcon("img/happy.png");*/
 
         private int value;
         private final int row;
@@ -78,18 +89,21 @@ public class Minesweeper extends JFrame {
 
         private void handleRightClick() {
             if (!isEnabled()) {
-                return; // Cell already revealed or marked
+                return; // Célula já revelada ou marcada
             }
     
             if (getText().equals("M")) {
-                setText(""); // Unmark the cell if already marked
-            } else {
-                setText("M"); // Mark the cell
+                setText(""); // Desmarcar a célula se já estiver marcada
+                flaggedCells--;
+            } else if (flaggedCells < 10) {  // Verifique o limite máximo de bandeiras
+                setText("M"); // Marcar a célula
+                flaggedCells++;
             }
+    
+            updateMinesCounterLabel();
         }
-        /*private boolean markCell() {
-            if ();
-        }*/
+        
+        
 
         int getValue() {
             return value;
@@ -186,13 +200,13 @@ public class Minesweeper extends JFrame {
     // adds panic mode too 
     private void initializeButtonPanel() {
         JPanel buttonPanel = new JPanel();
-
+    
         reset = new JButton("Reset");
         giveUp = new JButton("Desistir");
         finish = new JButton("Encerrar");
         panic = new JButton("Panic");
         redefineAndInsertImage("img/happy.png",25,20);
-
+    
         reset.addActionListener(actionListener);
         giveUp.addActionListener(actionListener);
         finish.addActionListener(actionListener);
@@ -202,9 +216,14 @@ public class Minesweeper extends JFrame {
         buttonPanel.add(giveUp);
         buttonPanel.add(finish);
         buttonPanel.add(panic);
-
+    
+        // Inicialize a variável minesCounterLabel
+        minesCounterLabel = new JLabel("Minas: " + totalMines);
+        buttonPanel.add(minesCounterLabel);
+    
         frame.add(buttonPanel, BorderLayout.NORTH);
     }
+    
 
     private void initializeGrid() {
         Container grid = new Container();
@@ -239,6 +258,7 @@ public class Minesweeper extends JFrame {
     }
 
     private void resetAllCells() {
+        flaggedCells = 0;
         for (int row = 0; row < gridSize; row++) {
             for (int col = 0; col < gridSize; col++) {
                 cells[row][col].reset();
@@ -260,6 +280,8 @@ public class Minesweeper extends JFrame {
             }
         }
 
+        totalMines = mineCount;
+
         for (int index = 0; index < mineCount; index++) {
             int choice = random.nextInt(positions.size());
             int row = choice / gridSize;
@@ -278,12 +300,17 @@ public class Minesweeper extends JFrame {
     }
 
     private void handleCell(Cell cell) {
+        if (cell.getText().equals("M")) {
+            return; // Não permita revelar uma célula marcada com bandeira
+        }
+    
         if (cell.isAMine()) {
             cell.setForeground(Color.RED);
             cell.reveal();
             revealBoardAndDisplay("Você clicou em uma mina!");
             return;
         }
+    
         if (cell.getValue() == 0) {
             Set<Cell> positions = new HashSet<>();
             positions.add(cell);
@@ -291,6 +318,7 @@ public class Minesweeper extends JFrame {
         } else {
             cell.reveal();
         }
+        
         checkForWin();
     }
 
@@ -307,6 +335,8 @@ public class Minesweeper extends JFrame {
         );
     
         createMines();
+        flaggedCells = 0;
+        updateMinesCounterLabel();
     }
     
 
@@ -341,15 +371,16 @@ public class Minesweeper extends JFrame {
                 }
             }
         }
-
+    
         if (won) {
             JOptionPane.showMessageDialog(
                     frame, "Você ganhou!", "Parabéns",
                     JOptionPane.INFORMATION_MESSAGE
             );
+            createMines();  // Resetar o jogo
         }
     }
-
+    
     private static void run(final int gridSize) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
