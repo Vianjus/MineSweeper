@@ -67,12 +67,7 @@ public class Minesweeper extends JFrame {
     }
 
     private class Cell extends JButton {
-        // icons
-        /*ImageIcon flag = new ImageIcon("C:\\Users\\leand\\Área de Trabalho\\new\\img\\flag.png");
-        ImageIcon bomb = new ImageIcon("C:\\Users\\leand\\Área de Trabalho\\new\\img\\bomb.png");
-        ImageIcon sadFace = new ImageIcon("img/sad.png");
-        ImageIcon happyFace = new ImageIcon("img/happy.png");*/
-
+    
         private int value;
         private final int row;
         private final int col;
@@ -405,7 +400,11 @@ public class Minesweeper extends JFrame {
         fullScreenFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         fullScreenFrame.setUndecorated(true); // Remove bordas do JFrame
         fullScreenFrame.setVisible(true);
-    
+        fullScreenFrame.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                fullScreenFrame.dispose(); // Fecha a janela em tela cheia
+            }
+        });
     }
 
     public static void main(String[] args) {
