@@ -7,6 +7,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import javax.imageio.ImageIO;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+
+
 
 
 
@@ -26,6 +34,13 @@ public class Minesweeper extends JFrame {
     private JButton panic;
 
     private JLabel minesCounterLabel;
+
+    private Cell currentSelectedCell;
+    private Cell currentRevealCell;
+
+    
+
+    
 
     //funcao que redimensiona a imagem do emoji e insere no botao reset
     private void redefineAndInsertImage(String caminhoDaImagem, int largura, int altura) {
@@ -73,12 +88,23 @@ public class Minesweeper extends JFrame {
         private int value;
         private final int row;
         private final int col;
+        
 
         Cell(final int row, final int col, final ActionListener actionListener) {
             this.row = row;
             this.col = col;
             addActionListener(actionListener);
             addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    currentSelectedCell = Cell.this;
+                }
+        
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    currentSelectedCell = null;
+                }
+        
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (SwingUtilities.isRightMouseButton(e)) {
@@ -87,7 +113,20 @@ public class Minesweeper extends JFrame {
                 }
             });
             setText("");
+        
+            addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_F) {
+                        handleFlagKeyPress();
+                    }
+                }
+            });
+        
+            setFocusable(true); // Permitir que a célula receba o foco
         }
+        
+        
 
         private void handleRightClick() {
             if (!isEnabled()) {
@@ -230,32 +269,47 @@ public class Minesweeper extends JFrame {
         panic.addActionListener(actionListener);
         panicPanel.add(panic);
         frame.add(panicPanel, BorderLayout.SOUTH);
+
         
+
     }
+
+    private void handleFlagKeyPress() {
+        if (currentSelectedCell != null) {
+            currentSelectedCell.handleRightClick();
+        }
+    }
+    
+    
+    
+    
+
 
     private void initializeGrid() {
         Container grid = new Container();
         grid.setLayout(new GridLayout(gridSize, gridSize));
-
+    
         for (int row = 0; row < gridSize; row++) {
             for (int col = 0; col < gridSize; col++) {
                 cells[row][col] = new Cell(row, col, actionListener);
                 grid.add(cells[row][col]);
+                cells[row][col].addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (SwingUtilities.isRightMouseButton(e)) {
+                            handleGridRightClick(e);
+                        }
+                    }
+                });
+                cells[row][col].setFocusable(true); // Permitir que cada célula receba o foco
             }
         }
-
-        grid.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    handleGridRightClick(e);
-                }
-            }
-        });
-
+    
         createMines();
         frame.add(grid, BorderLayout.CENTER);
     }
+    
+    
 
     private void handleGridRightClick(MouseEvent e) {
         Component source = e.getComponent();
@@ -306,6 +360,7 @@ public class Minesweeper extends JFrame {
                 }
             }
         }
+        
     }
 
     private void handleCell(Cell cell) {
@@ -387,6 +442,7 @@ public class Minesweeper extends JFrame {
                     frame, "Você ganhou!", "Parabéns",
                     JOptionPane.INFORMATION_MESSAGE
             );
+            totalMines = 10;
             createMines();  // Resetar o jogo
         }
     }
