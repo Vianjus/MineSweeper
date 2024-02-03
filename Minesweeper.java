@@ -1,10 +1,11 @@
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import javax.imageio.ImageIO;
 
 
 
@@ -44,7 +45,12 @@ public class Minesweeper extends JFrame {
             System.exit(0);
         } 
         else if (source == panic){
-            displayFullScreenImage();
+            try {
+                displayFullScreenImage("img/panic.png");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error loading image.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
 
         else {
@@ -388,24 +394,18 @@ public class Minesweeper extends JFrame {
         new Minesweeper(gridSize);
     }
 
-    public static void displayFullScreenImage() {
-        // Criar um JFrame em tela cheia
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setUndecorated(true); // Remover bordas e barras de título
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        
-        // Carregar a imagem (substitua "caminho/para/sua/imagem.jpg" pelo caminho real da sua imagem)
-        ImageIcon imageIcon = new ImageIcon("caminho/para/sua/imagem.jpg");
-        
-        // Criar um JLabel para exibir a imagem
-        JLabel imageLabel = new JLabel(imageIcon);
-        
-        // Adicionar o JLabel ao JFrame
-        frame.getContentPane().add(imageLabel, BorderLayout.CENTER);
-        
-        // Exibir o JFrame
-        frame.setVisible(true);
+    public static void displayFullScreenImage(String imagePath) throws Exception{
+        File file = new File(imagePath);
+        Image image = ImageIO.read(file);
+        JLabel label = new JLabel(new ImageIcon(image));
+
+        JFrame fullScreenFrame = new JFrame();
+        fullScreenFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        fullScreenFrame.getContentPane().add(label, BorderLayout.CENTER);
+        fullScreenFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        fullScreenFrame.setUndecorated(true); // Remove bordas do JFrame
+        fullScreenFrame.setVisible(true);
+    
     }
 
     public static void main(String[] args) {
