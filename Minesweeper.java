@@ -205,30 +205,32 @@ public class Minesweeper extends JFrame {
     //funcao que inicializa o painel de botoes
     private void initializeButtonPanel() {
         JPanel buttonPanel = new JPanel();
-    
+        JPanel panicPanel = new JPanel(new BorderLayout());
+        
         reset = new JButton("Resetar");
         giveUp = new JButton("Desistir");
         finish = new JButton("Encerrar");
-        panic = new JButton("-");
+        panic = new JButton(" \n");
         redefineAndInsertImage("img/happy.png",25,20);
         
         reset.addActionListener(actionListener);
         giveUp.addActionListener(actionListener);
         finish.addActionListener(actionListener);
-        panic.addActionListener(actionListener);
         
-        buttonPanel.add(panic);
         buttonPanel.add(reset);
         
         minesCounterLabel = new JLabel("Minas: " + totalMines);
         buttonPanel.add(minesCounterLabel);
-        
-        frame.add(buttonPanel);
 
+        
         buttonPanel.add(giveUp);
         buttonPanel.add(finish);
-        
+        frame.add(buttonPanel, BorderLayout.NORTH);
 
+        panic.addActionListener(actionListener);
+        panicPanel.add(panic);
+        frame.add(panicPanel, BorderLayout.SOUTH);
+        
     }
 
     private void initializeGrid() {
