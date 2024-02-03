@@ -1,4 +1,5 @@
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -26,15 +27,18 @@ public class Minesweeper extends JFrame {
 
     private JLabel minesCounterLabel;
 
+    //funcao que redimensiona a imagem do emoji e insere no botao reset
     private void redefineAndInsertImage(String caminhoDaImagem, int largura, int altura) {
         ImageIcon imagemOriginal = new ImageIcon(caminhoDaImagem);
         Image imagemRedimensionada = imagemOriginal.getImage().getScaledInstance(largura, altura, Image.SCALE_SMOOTH);
         reset.setIcon(new ImageIcon(imagemRedimensionada));
     }
 
+    //funcao que lanca os eventos dos botoes do painel
     private final ActionListener actionListener = actionEvent -> {
         Object source = actionEvent.getSource();
         if (source == reset) {
+            //mudar o emoji triste para feliz 
             redefineAndInsertImage("img/happy.png",25,20);
             createMines();
         } 
@@ -54,15 +58,13 @@ public class Minesweeper extends JFrame {
         }
 
         else {
-            redefineAndInsertImage("img/happy.png",25,20);
+            //redefineAndInsertImage("img/happy.png",25,20);
             handleCell((Cell) source);
         }
     };
 
-    // Adicione o método updateMinesCounterLabel() na classe Minesweeper
     private void updateMinesCounterLabel() {
         int remainingMines = totalMines - flaggedCells;
-        // Atualize o rótulo do contador de minas
         minesCounterLabel.setText("Minas: " + remainingMines);
     }
 
@@ -76,7 +78,6 @@ public class Minesweeper extends JFrame {
             this.row = row;
             this.col = col;
             addActionListener(actionListener);
-            // Add the following code to handle right-click events
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -141,6 +142,7 @@ public class Minesweeper extends JFrame {
             }
         }
 
+        //funcao que define os vizinhos de cada celula
         void getNeighbours(final Cell[] container) {
             for (int i = 0; i < reusableStorage.length; i++) {
                 reusableStorage[i] = null;
@@ -181,6 +183,7 @@ public class Minesweeper extends JFrame {
         }
     }
 
+    //funcao que inicia todos os elementos do tabuleiro
     private Minesweeper(final int gridSize) {
         this.gridSize = gridSize;
         cells = new Cell[gridSize][gridSize];
@@ -189,6 +192,7 @@ public class Minesweeper extends JFrame {
         frame.setUndecorated(true); 
 
         initializeButtonPanel();
+        
         initializeGrid();
 
         frame.setSize(SIZE, SIZE);
@@ -197,34 +201,35 @@ public class Minesweeper extends JFrame {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
-
-    // adds panic mode too 
+ 
+    //funcao que inicializa o painel de botoes
     private void initializeButtonPanel() {
         JPanel buttonPanel = new JPanel();
     
-        reset = new JButton("Reset");
+        reset = new JButton("Resetar");
         giveUp = new JButton("Desistir");
         finish = new JButton("Encerrar");
-        panic = new JButton("Panic");
+        panic = new JButton("-");
         redefineAndInsertImage("img/happy.png",25,20);
-    
+        
         reset.addActionListener(actionListener);
         giveUp.addActionListener(actionListener);
         finish.addActionListener(actionListener);
         panic.addActionListener(actionListener);
         
-        buttonPanel.add(reset);
-        buttonPanel.add(giveUp);
-        buttonPanel.add(finish);
         buttonPanel.add(panic);
-    
-        // Inicialize a variável minesCounterLabel
+        buttonPanel.add(reset);
+        
         minesCounterLabel = new JLabel("Minas: " + totalMines);
         buttonPanel.add(minesCounterLabel);
-    
-        frame.add(buttonPanel, BorderLayout.NORTH);
+        
+        frame.add(buttonPanel);
+
+        buttonPanel.add(giveUp);
+        buttonPanel.add(finish);
+        
+
     }
-    
 
     private void initializeGrid() {
         Container grid = new Container();
@@ -267,6 +272,7 @@ public class Minesweeper extends JFrame {
         }
     }
 
+    //funcao que sorteia e define as celulas que serao minas
     private void createMines() {
         redefineAndInsertImage("img/happy.png",25,20);
         resetAllCells();
@@ -361,6 +367,7 @@ public class Minesweeper extends JFrame {
         }
     }
 
+    //funcao que confere se todas as posicoes que nao contem bombas foram reveladas
     private void checkForWin() {
         boolean won = true;
         outer:
