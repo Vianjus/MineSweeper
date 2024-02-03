@@ -58,11 +58,18 @@ public class Minesweeper extends JFrame {
         }
 
         else {
+<<<<<<< HEAD
             //redefineAndInsertImage("img/happy.png",25,20);
+=======
+>>>>>>> 4770730fd46be62101f0c2dd28fa6f23355ed826
             handleCell((Cell) source);
         }
     };
 
+<<<<<<< HEAD
+=======
+   
+>>>>>>> 4770730fd46be62101f0c2dd28fa6f23355ed826
     private void updateMinesCounterLabel() {
         int remainingMines = totalMines - flaggedCells;
         minesCounterLabel.setText("Minas: " + remainingMines);
@@ -78,6 +85,10 @@ public class Minesweeper extends JFrame {
             this.row = row;
             this.col = col;
             addActionListener(actionListener);
+<<<<<<< HEAD
+=======
+          
+>>>>>>> 4770730fd46be62101f0c2dd28fa6f23355ed826
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -201,7 +212,11 @@ public class Minesweeper extends JFrame {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> 4770730fd46be62101f0c2dd28fa6f23355ed826
     //funcao que inicializa o painel de botoes
     private void initializeButtonPanel() {
         JPanel buttonPanel = new JPanel();
@@ -218,8 +233,12 @@ public class Minesweeper extends JFrame {
         panic.addActionListener(actionListener);
         
         buttonPanel.add(panic);
+<<<<<<< HEAD
         buttonPanel.add(reset);
         
+=======
+    
+>>>>>>> 4770730fd46be62101f0c2dd28fa6f23355ed826
         minesCounterLabel = new JLabel("Minas: " + totalMines);
         buttonPanel.add(minesCounterLabel);
         
